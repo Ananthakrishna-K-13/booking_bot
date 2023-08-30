@@ -1,37 +1,23 @@
+""" import os
+os.environ['PATH']+=r"path_to_browserDriver" """
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-options =  webdriver.ChromeOptions()
-options.add_experimental_option("detach",True)
+
+options = webdriver.ChromeOptions()
+options.add_experimental_option("detach", True)
 driver = webdriver.Chrome(options=options)
 
-wait = WebDriverWait(driver,timeout=5)
-
-driver.get("https://orteil.dashnet.org/cookieclicker/")
-print(driver.title)
-
+driver.get("http://uitestingplayground.com/")
 driver.implicitly_wait(10)
-driver.find_element(By.ID,"langSelect-EN").click()
-driver.implicitly_wait(10)
-cookie = driver.find_element(By.ID,"bigCookie")
-cookie_count = driver.find_element(By.ID,"cookies")
-items = [driver.find_element(By.ID,"product"+str(i)) for i in range(1,-1,-1)] 
 
+driver.find_element(By.LINK_TEXT,"Progress Bar").click()
+driver.find_element(By.ID,"startButton").click()
+print(driver.find_element(By.ID,"progressBar").text)
 
-for i in range(5000):
-    actions = ActionChains(driver)
-    actions.click(cookie)
-    actions.perform()
-    count = int(cookie_count.text.split()[0])
-    for item in items:
-        value = int(item.text.split()[1])
-        if value <=count:
-            upgrade = ActionChains(driver)
-            upgrade.move_to_element(item)
-            upgrade.click()
-            upgrade.perform()
-
-
+WebDriverWait(driver,100).until(
+    EC.text_to_be_present_in_element((By.ID,"progressBar"),"75%")
+)
+driver.find_element(By.ID,"stopButton").click()
