@@ -4,6 +4,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from booking.booking_filtrations import BookingFiltration   
+from booking.booking_report import BookingReport
 import booking.constants as const
 import os
 
@@ -12,6 +14,7 @@ class Booking:
     def __init__(self):
         options = webdriver.ChromeOptions()
         options.add_experimental_option("detach", True)
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         self.driver = webdriver.Chrome(options=options)
         self.driver.implicitly_wait(15)
         self.driver.maximize_window()
@@ -31,7 +34,6 @@ class Booking:
         ).click()
         items = self.driver.find_elements(By.CLASS_NAME, "ea1163d21f")
         for item in items:
-            print(item.text)
             if item.text == "USD":
                 item.click()
                 break
@@ -64,6 +66,16 @@ class Booking:
             inc_button.click()
     def click_search(self):
         self.driver.find_element(By.CSS_SELECTOR,'button[type="submit"]').click()
+
+    def apply_filtration(self):
+        filtration = BookingFiltration(driver=self.driver)
+        filtration.sort_by_price()
+        filtration.apply_starrating(3,4,5)
+
+    def report_results(self):
+        hotels = self.driver.find_elements(By.CSS_SELECTOR,'div[data-testid="property-card"]')
+        report = BookingReport(hotels)
+        report.pull_details()
 
         
         
