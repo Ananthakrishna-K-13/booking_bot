@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from booking.booking_filtrations import BookingFiltration   
 from booking.booking_report import BookingReport
+from prettytable import PrettyTable
 import booking.constants as const
 import os
 
@@ -75,7 +76,10 @@ class Booking:
     def report_results(self):
         hotels = self.driver.find_elements(By.CSS_SELECTOR,'div[data-testid="property-card"]')
         report = BookingReport(hotels)
-        report.pull_details()
-
+        table = PrettyTable(
+            field_names=["Hotel Name","Hotel Price", "Hotel Rating"]
+        )
+        table.add_rows(report.pull_details())
+        print(table)
         
         
